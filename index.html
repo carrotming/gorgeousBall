@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <style>
+       *{
+         padding: 0;
+         margin: 0;
+         border: 0;
+        }
+        html,body{
+            width: 100%;
+            height: 100%;
+
+        }
+        #box{
+            width: 100%;
+            height: 100%;
+            position: relative;
+            background: #000;
+        }
+    </style>
+</head>
+<body>
+ <div id="box"></div>
+</body>
+<script src="Underscore-min.js"></script>
+<script>
+    function Round(json){
+         this._init(json);
+    }
+    Round.prototype={
+        _init:function (json){
+            var json=json||{};
+            this.id=json.id;
+            this.x=json.x;
+            this.y=json.y;
+            this.r=60;
+            this.color=json.color;
+
+            ballArr.push(this);
+
+            this.dx= _.random(-10,10);
+            this.dy= _.random(-10,10);
+            this.dr= _.random(5,10);
+        },
+        create:function (){
+          var oDiv=document.getElementById(this.id)
+          var div=document.createElement('div');
+            oDiv.appendChild(div);
+            div.style.left=this.x+'px'
+            div.style.top=this.y+'px'
+            div.style.position='absolute';
+            div.style.borderRadius='50%'
+            div.style.backgroundColor=this.color;
+
+            div.style.width=this.r+'px';
+            div.style.height=this.r+'px';
+
+        },
+        update:function (){
+            this.x+=this.dx;
+            this.y+=this.dy;
+            this.r-=this.dr;
+            if(this.r<10){
+                this.r=0;
+                ballArr= _.without(ballArr,this);
+            }
+        }
+    }
+    var box=document.getElementById('box');
+    var ballArr=[];
+    var getRandomColor = function(){
+        return 'rgba('+ _.random(0,255)+','+ _.random(0,255)+','+ _.random(0,255)+','+Math.random()+')'
+    }
+    box.onmousemove=function (ev){
+         var ev=ev||window.event;
+        new Round({id:'box',x:ev.clientX,y:ev.clientY,color:getRandomColor()})
+    }
+
+    setInterval(function (){
+        for(var i=0;i<box.children.length;i++){
+            box.removeChild(box.children[i]);
+        }
+        for(var j=0;j<ballArr.length;j++){
+            ballArr[j].create();
+            ballArr[j].update();
+        }
+    },30)
+
+
+</script>
+</html>
